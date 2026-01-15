@@ -47,3 +47,6 @@ tests/results/*.json
 # Performance baseline data (collected measurements)
 tests/performance_baselines/*.txt
 tests/performance_baselines/*.md
+
+# Auto Claude data directory
+.auto-claude/
