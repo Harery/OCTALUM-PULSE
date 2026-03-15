@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#
+# OCTALUME Pre-Push Hook
+# Runs tests and validations before pushing to remote
+#
+
+set -e
+
+echo "🔍 Running pre-push checks..."
+
+# Get current branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Skip checks for certain branches
+if [[ "$CURRENT_BRANCH" == "gh-pages" ]] || [[ "$CURRENT_BRANCH" == "dependabot/"* ]]; then
+    echo "⏭️  Skipping pre-push checks for branch: $CURRENT_BRANCH"
+    exit 0
+fi
+
+ERRORS=0
+
+# 1. Check if branch is behind remote
+echo "  → Checking if branch is up-to-date with remote..."
+git fetch origin "$CURRENT_BRANCH" 2>/dev/null || true
+LOCAL=$(git rev-parse HEAD 2>/dev/null || echo "")
+REMOTE=$(git rev-parse "origin/$CURRENT_BRANCH" 2>/dev/null || echo "")
+BASE=$(git merge-base HEAD "origin/$CURRENT_BRANCH" 2>/dev/null || echo "")
+
+if [ "$LOCAL" != "$REMOTE" ] && [ "$LOCAL" != "$BASE" ]; then
+    echo "⚠️  Your branch is ahead of origin/$CURRENT_BRANCH"
+fi
+
+# 2. Run any existing tests
+echo "  → Looking for test scripts..."
+if [ -f "scripts/test.sh" ]; then
+    echo "  → Running tests via scripts/test.sh..."
+    if bash scripts/test.sh; then
+        echo "  ✅ Tests passed"
+    else
+        echo "❌ Tests failed"
+        ERRORS=$((ERRORS + 1))
+    fi
+elif [ -f "Makefile" ] && grep -q "^test:" Makefile 2>/dev/null; then
+    echo "  → Running tests via make test..."
+    if make test 2>/dev/null; then
+        echo "  ✅ Tests passed"
+    else
+        echo "❌ Tests failed"
+        ERRORS=$((ERRORS + 1))
+    fi
+else
+    echo "  ℹ️  No test script found, skipping tests"
+fi
+
+# 3. Lint check for shell scripts
+echo "  → Checking shell scripts..."
+SHELL_SCRIPTS=$(find . -name "*.sh" -not -path "./.git/*" 2>/dev/null | head -20 || true)
+if [ -n "$SHELL_SCRIPTS" ] && command -v shellcheck &> /dev/null; then
+    for SCRIPT in $SHELL_SCRIPTS; do
+        if ! shellcheck "$SCRIPT" 2>/dev/null; then
+            echo "⚠️  Issues found in $SCRIPT"
+        fi
+    done
+fi
+
+# 4. Check for uncommitted changes in submodules
+echo "  → Checking submodules..."
+if [ -f ".gitmodules" ]; then
+    git submodule status | while read -r LINE; do
+        if echo "$LINE" | grep -q "^+"; then
+            echo "⚠️  Submodule has uncommitted changes: $(echo "$LINE" | awk '{print $2}')"
+        fi
+    done
+fi
+
+if [ $ERRORS -gt 0 ]; then
+    echo ""
+    echo "❌ Pre-push checks failed with $ERRORS error(s)"
+    echo "Push blocked. Fix the issues above and try again."
+    echo ""
+    echo "To bypass this check, use: git push --no-verify"
+    exit 1
+fi
+
+echo ""
+echo "✅ All pre-push checks passed!"
+echo "🚀 Ready to push to: $CURRENT_BRANCH"
+exit 0

@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# OCTALUME Pre-Commit Hook
+# Runs quality checks before each commit
+#
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -v '\.sample$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ No staged files to check"
+    exit 0
+fi
+
+# Check for common issues
+ERRORS=0
+
+# 1. Check for trailing whitespace
+echo "  → Checking for trailing whitespace..."
+WHITESPACE_FILES=$(echo "$STAGED_FILES" | xargs grep -l '[[:space:]]$' 2>/dev/null || true)
+if [ -n "$WHITESPACE_FILES" ]; then
+    echo "❌ Trailing whitespace found in:"
+    echo "$WHITESPACE_FILES"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# 2. Check for TODO/FIXME that should be tracked
+echo "  → Checking for unresolved TODOs..."
+TODO_FILES=$(echo "$STAGED_FILES" | xargs grep -l 'TODO\|FIXME' 2>/dev/null || true)
+if [ -n "$TODO_FILES" ]; then
+    echo "⚠️  Files with TODO/FIXME comments:"
+    echo "$TODO_FILES"
+fi
+
+# 3. Check for large files (>1MB)
+echo "  → Checking for large files..."
+for FILE in $STAGED_FILES; do
+    if [ -f "$FILE" ]; then
+        SIZE=$(stat -f%z "$FILE" 2>/dev/null || stat -c%s "$FILE" 2>/dev/null || echo 0)
+        if [ "$SIZE" -gt 1048576 ]; then
+            echo "❌ Large file detected: $FILE ($(numfmt --to=iec $SIZE))"
+            ERRORS=$((ERRORS + 1))
+        fi
+    fi
+done
+
+# 4. Check for sensitive data patterns
+echo "  → Checking for sensitive data..."
+SENSITIVE_PATTERNS="password|secret|api_key|private_key|token|credential"
+SENSITIVE_FILES=$(echo "$STAGED_FILES" | xargs grep -liE "$SENSITIVE_PATTERNS" 2>/dev/null || true)
+if [ -n "$SENSITIVE_FILES" ]; then
+    echo "⚠️  Potential sensitive data in files (please review):"
+    echo "$SENSITIVE_FILES"
+fi
+
+# 5. Markdown lint check (if markdown files exist)
+MD_FILES=$(echo "$STAGED_FILES" | grep '\.md$' || true)
+if [ -n "$MD_FILES" ]; then
+    echo "  → Checking markdown files..."
+    for MD_FILE in $MD_FILES; do
+        if [ -f "$MD_FILE" ]; then
+            # Check for broken internal links (basic check)
+            BROKEN_LINKS=$(grep -oE '\[.*\]\([#].*\)' "$MD_FILE" 2>/dev/null || true)
+            if [ -n "$BROKEN_LINKS" ]; then
+                echo "⚠️  Potential broken anchor links in $MD_FILE"
+            fi
+        fi
+    done
+fi
+
+if [ $ERRORS -gt 0 ]; then
+    echo ""
+    echo "❌ Pre-commit checks failed with $ERRORS error(s)"
+    echo "Please fix the issues above before committing."
+    exit 1
+fi
+
+echo ""
+echo "✅ All pre-commit checks passed!"
+exit 0

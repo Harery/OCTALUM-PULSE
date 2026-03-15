@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# OCTALUME Commit Message Hook
+# Enforces Conventional Commits format
+#
+
+set -e
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Conventional commit types
+VALID_TYPES="feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|wip"
+VALID_SCOPES="[a-z0-9_-]*"
+
+# Pattern for conventional commits
+PATTERN="^($VALID_TYPES)(\($VALID_SCOPES\))?!?: .{1,100}$"
+
+# First line of commit message
+FIRST_LINE=$(echo "$COMMIT_MSG" | head -n1)
+
+echo "🔍 Validating commit message..."
+
+# Check if message matches conventional commit format
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+    echo ""
+    echo "❌ Commit message does not follow Conventional Commits format!"
+    echo ""
+    echo "📋 Expected format:"
+    echo "   <type>(<scope>): <description>"
+    echo ""
+    echo "📌 Valid types:"
+    echo "   feat     - New feature"
+    echo "   fix      - Bug fix"
+    echo "   docs     - Documentation changes"
+    echo "   style    - Code style changes (formatting, semicolons)"
+    echo "   refactor - Code refactoring"
+    echo "   perf     - Performance improvements"
+    echo "   test     - Adding/updating tests"
+    echo "   build    - Build system changes"
+    echo "   ci       - CI/CD configuration changes"
+    echo "   chore    - Other changes (maintenance)"
+    echo "   revert   - Reverting a previous commit"
+    echo "   wip      - Work in progress"
+    echo ""
+    echo "📝 Examples:"
+    echo "   feat(auth): add JWT token refresh"
+    echo "   fix(api): resolve null pointer in user handler"
+    echo "   docs(readme): update installation instructions"
+    echo "   chore(deps): update dependencies"
+    echo ""
+    echo "Your message was:"
+    echo "   $FIRST_LINE"
+    echo ""
+    exit 1
+fi
+
+# Check for overly long subject lines (>72 chars)
+SUBJECT_LENGTH=${#FIRST_LINE}
+if [ $SUBJECT_LENGTH -gt 72 ]; then
+    echo "⚠️  Warning: Subject line is $SUBJECT_LENGTH characters (max 72)"
+fi
+
+echo "✅ Commit message follows Conventional Commits format"
+exit 0
