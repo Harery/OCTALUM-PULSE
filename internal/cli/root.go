@@ -420,7 +420,7 @@ func (a *App) securityUpdate(ctx context.Context, pm string, dryRun bool) []stri
 
 func (a *App) smartUpdate(ctx context.Context, pm string, dryRun bool) []string {
 	safePackages := []string{"curl", "wget", "git", "vim", "htop", "tmux", "zsh"}
-	
+
 	switch pm {
 	case "apt":
 		if !dryRun {

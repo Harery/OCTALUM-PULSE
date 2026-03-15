@@ -60,7 +60,7 @@ func (p *PackagesPlugin) Init(ctx context.Context, cfg interface{}) error {
 
 func (p *PackagesPlugin) Execute(ctx context.Context, opts interface{}) (interface{}, error) {
 	start := time.Now()
-	
+
 	options, ok := opts.(*ExecutionOptions)
 	if !ok {
 		options = &ExecutionOptions{DryRun: false, Verbose: false}

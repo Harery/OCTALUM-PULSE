@@ -26,7 +26,7 @@ func NewExecutor(dryRun, verbose bool) *Executor {
 
 func (e *Executor) Run(ctx context.Context, name string, args ...string) ([]byte, error) {
 	cmd := e.buildCommand(ctx, name, args...)
-	
+
 	if e.verbose {
 		fmt.Printf("  → Running: %s %s\n", name, strings.Join(args, " "))
 	}

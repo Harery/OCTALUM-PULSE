@@ -105,7 +105,7 @@ func (s *State) RecordOperation(opType, description, status, output string, dura
 
 func (s *State) GetOperations(limit int) ([]Operation, error) {
 	rows, err := s.db.Query(
-		`SELECT id, timestamp, type, description, status, output, duration_ms 
+		`SELECT id, timestamp, type, description, status, output, duration_ms
 		 FROM operations ORDER BY timestamp DESC LIMIT ?`,
 		limit,
 	)
@@ -135,9 +135,9 @@ func (s *State) RecordMetric(metricType, name, unit string, value float64) error
 
 func (s *State) GetMetrics(metricType string, since time.Time, limit int) ([]HealthMetric, error) {
 	rows, err := s.db.Query(
-		`SELECT id, timestamp, metric_type, name, value, unit 
-		 FROM health_metrics 
-		 WHERE metric_type = ? AND timestamp > ? 
+		`SELECT id, timestamp, metric_type, name, value, unit
+		 FROM health_metrics
+		 WHERE metric_type = ? AND timestamp > ?
 		 ORDER BY timestamp DESC LIMIT ?`,
 		metricType, since, limit,
 	)
@@ -170,7 +170,7 @@ func (s *State) CreateSnapshot(name, description, data string) (int64, error) {
 
 func (s *State) GetLatestSnapshot() (*Operation, error) {
 	row := s.db.QueryRow(
-		`SELECT id, timestamp, type, description, status, output, duration_ms 
+		`SELECT id, timestamp, type, description, status, output, duration_ms
 		 FROM snapshots ORDER BY timestamp DESC LIMIT 1`,
 	)
 	var op Operation
