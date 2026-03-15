@@ -127,10 +127,10 @@ func TestAptManager_DryRun(t *testing.T) {
 	if err := m.Cleanup(ctx, true); err != nil {
 		t.Errorf("Cleanup dry-run failed: %v", err)
 	}
-	if _, err := m.Install(ctx, []string{"test"}, true); err != nil {
+	if err := m.Install(ctx, []string{"test"}, true); err != nil {
 		t.Errorf("Install dry-run failed: %v", err)
 	}
-	if _, err := m.Remove(ctx, []string{"test"}, true); err != nil {
+	if err := m.Remove(ctx, []string{"test"}, true); err != nil {
 		t.Errorf("Remove dry-run failed: %v", err)
 	}
 }
