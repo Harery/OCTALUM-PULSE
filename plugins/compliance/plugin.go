@@ -1,3 +1,4 @@
+// Package compliance provides regulatory compliance checking for HIPAA, SOC2, PCI-DSS, and CIS benchmarks.
 package compliance
 
 import (

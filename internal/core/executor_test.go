@@ -40,7 +40,7 @@ func TestRunDryRun(t *testing.T) {
 		t.Fatalf("Run() error = %v", err)
 	}
 
-	if string(output) != "" {
+	if len(output) != 0 {
 		t.Error("Dry-run should not execute command")
 	}
 }
@@ -56,6 +56,10 @@ func TestRunEcho(t *testing.T) {
 	output, err := executor.Run(ctx, "echo", "-n", "hello")
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
+	}
+
+	if len(output) == 0 {
+		t.Error("Dry-run should not execute command")
 	}
 
 	if string(output) != "hello" {

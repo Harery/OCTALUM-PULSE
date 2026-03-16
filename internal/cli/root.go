@@ -81,9 +81,9 @@ func (a *App) registerBuiltInPlugins() {}
 
 func (a *App) Close() {
 	if a.state != nil {
-		a.state.Close()
+		_ = a.state.Close()
 	}
-	a.pluginMgr.Close()
+	_ = a.pluginMgr.Close()
 }
 
 func NewRootCommand(cfg *config.Config, v version.Info) *cobra.Command {
@@ -224,9 +224,7 @@ func (a *App) runDoctorChecks(ctx context.Context, quick bool) []HealthResult {
 		Name:    "Package Manager",
 		Status:  "ok",
 		Message: a.platformInfo.PackageManager,
-	})
-
-	results = append(results, HealthResult{
+	}, HealthResult{
 		Name:    "Init System",
 		Status:  "ok",
 		Message: a.platformInfo.InitSystem,
@@ -281,7 +279,7 @@ func (a *App) fixCmd(app *App) *cobra.Command {
 			if !auto {
 				fmt.Print("\nFix these issues? [y/N]: ")
 				var response string
-				fmt.Scanln(&response)
+				_, _ = fmt.Scanln(&response)
 				if response != "y" && response != "Y" {
 					fmt.Println("Aborted.")
 					return nil
@@ -303,7 +301,7 @@ func (a *App) fixCmd(app *App) *cobra.Command {
 			fmt.Printf("\n✅ Fixed %d/%d issues in %s\n", fixed, len(issues), duration.Round(time.Millisecond))
 
 			if a.state != nil {
-				a.state.RecordOperation("fix", fmt.Sprintf("Fixed %d issues", fixed), "success", "", duration)
+				_, _ = a.state.RecordOperation("fix", fmt.Sprintf("Fixed %d issues", fixed), "success", "", duration)
 			}
 
 			return nil
@@ -356,7 +354,7 @@ func (a *App) updateCmd(app *App) *cobra.Command {
 			}
 
 			if !dryRun && a.state != nil {
-				a.state.RecordOperation("update", fmt.Sprintf("Updated packages via %s", pm), "success", fmt.Sprintf("%d actions", len(actions)), duration)
+				_, _ = a.state.RecordOperation("update", fmt.Sprintf("Updated packages via %s", pm), "success", fmt.Sprintf("%d actions", len(actions)), duration)
 			}
 
 			fmt.Printf("\n✅ Update completed in %s\n", duration.Round(time.Millisecond))
@@ -372,16 +370,16 @@ func (a *App) fullUpdate(ctx context.Context, pm string, dryRun bool) []string {
 	var actions []string
 
 	switch pm {
-	case "apt":
-		if !dryRun {
-			a.executor.RunWithSudo(ctx, "apt-get", "update", "-qq")
-			a.executor.RunWithSudo(ctx, "apt-get", "upgrade", "-y", "-qq")
-		}
+			case "apt":
+				if !dryRun {
+					_, _ = a.executor.RunWithSudo(ctx, "apt-get", "update", "-qq")
+					_, _ = a.executor.RunWithSudo(ctx, "apt-get", "upgrade", "-y", "-qq")
+				}
 		actions = append(actions, "✓ Package cache refreshed", "✓ Packages upgraded")
-	case "dnf", "yum":
-		if !dryRun {
-			a.executor.RunWithSudo(ctx, pm, "upgrade", "-y", "--quiet")
-		}
+			case "dnf", "yum":
+				if !dryRun {
+					_, _ = a.executor.RunWithSudo(ctx, pm, "upgrade", "-y", "--quiet")
+				}
 		actions = append(actions, "✓ Packages upgraded")
 	case "pacman":
 		if !dryRun {
@@ -478,7 +476,7 @@ func (a *App) cleanupCmd(app *App) *cobra.Command {
 			fmt.Printf("\n✅ Cleanup completed in %s\n", duration.Round(time.Millisecond))
 
 			if !dryRun && a.state != nil {
-				a.state.RecordOperation("cleanup", "System cleanup", "success", "", duration)
+				_, _ = a.state.RecordOperation("cleanup", "System cleanup", "success", "", duration)
 			}
 
 			return nil
@@ -525,7 +523,7 @@ func (a *App) securityCmd(app *App) *cobra.Command {
 			fmt.Printf("\n✅ Security audit completed in %s\n", duration.Round(time.Millisecond))
 
 			if a.state != nil {
-				a.state.RecordOperation("security_audit", "Security audit", "success", fmt.Sprintf("%d findings", len(findings)), duration)
+				_, _ = a.state.RecordOperation("security_audit", "Security audit", "success", fmt.Sprintf("%d findings", len(findings)), duration)
 			}
 
 			return nil

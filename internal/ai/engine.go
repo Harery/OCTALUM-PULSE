@@ -165,7 +165,7 @@ func (p *OllamaProvider) Complete(ctx context.Context, prompt string) (string, e
 	if err != nil {
 		return "", fmt.Errorf("ollama request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var result struct {
 		Response string `json:"response"`
@@ -230,7 +230,7 @@ func (p *OpenAIProvider) Complete(ctx context.Context, prompt string) (string, e
 	if err != nil {
 		return "", fmt.Errorf("openai request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var result struct {
 		Choices []struct {

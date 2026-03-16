@@ -222,7 +222,7 @@ func (p *PerformancePlugin) optimizeMemory(ctx context.Context, dryRun bool) *Ch
 	}
 
 	if !dryRun {
-		os.WriteFile(swapPath, []byte(target), 0644)
+		_ = os.WriteFile(swapPath, []byte(target), 0644)
 	}
 
 	return &Change{
@@ -253,7 +253,7 @@ func (p *PerformancePlugin) optimizeIO(ctx context.Context, dryRun bool) *Change
 	}
 
 	if !strings.Contains(content, "["+target+"]") && !dryRun {
-		os.WriteFile(schedulerPath, []byte(target), 0644)
+		_ = os.WriteFile(schedulerPath, []byte(target), 0644)
 	}
 
 	return &Change{
@@ -295,7 +295,7 @@ func (p *PerformancePlugin) optimizeNetwork(ctx context.Context, dryRun bool) *C
 	}
 
 	if !dryRun {
-		os.WriteFile(tcpCongestion, []byte("bbr"), 0644)
+		_ = os.WriteFile(tcpCongestion, []byte("bbr"), 0644)
 	}
 
 	return &Change{

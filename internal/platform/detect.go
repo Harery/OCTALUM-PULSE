@@ -1,4 +1,4 @@
-// Package platform provides OS detection and platform-specific functionality
+// Package platform provides OS detection and platform-specific functionality.
 package platform
 
 import (
@@ -8,6 +8,9 @@ import (
 	"runtime"
 	"strings"
 )
+
+// DistroDebian is the constant for debian-based distributions.
+const DistroDebian = "debian"
 
 // Info contains platform information
 type Info struct {
@@ -63,7 +66,7 @@ func (i *Info) detectFromOSRelease() error {
 	if err != nil {
 		return fmt.Errorf("cannot read /etc/os-release: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	release := &osRelease{}
 	scanner := bufio.NewScanner(file)
@@ -101,7 +104,7 @@ func (i *Info) detectFromOSRelease() error {
 
 func (i *Info) detectPackageManager() {
 	switch i.Distribution {
-	case "ubuntu", "debian", "linuxmint", "pop":
+	case "ubuntu", DistroDebian, "linuxmint", "pop":
 		i.PackageManager = "apt"
 	case "fedora":
 		i.PackageManager = "dnf"
@@ -122,7 +125,7 @@ func (i *Info) detectPackageManager() {
 	case "void":
 		i.PackageManager = "xbps"
 	default:
-		if strings.Contains(i.IDLike, "debian") {
+		if strings.Contains(i.IDLike, DistroDebian) {
 			i.PackageManager = "apt"
 		} else if strings.Contains(i.IDLike, "rhel") || strings.Contains(i.IDLike, "fedora") {
 			i.PackageManager = "dnf"
@@ -223,8 +226,8 @@ func (i *Info) IsSupported() bool {
 // Family returns the OS family (debian, redhat, arch, suse, alpine)
 func (i *Info) Family() string {
 	switch i.Distribution {
-	case "ubuntu", "debian", "linuxmint", "pop":
-		return "debian"
+	case "ubuntu", DistroDebian, "linuxmint", "pop":
+		return DistroDebian
 	case "fedora", "rhel", "centos", "rocky", "almalinux":
 		return "redhat"
 	case "arch", "manjaro", "endeavouros":
@@ -234,8 +237,8 @@ func (i *Info) Family() string {
 	case "alpine":
 		return "alpine"
 	default:
-		if strings.Contains(i.IDLike, "debian") {
-			return "debian"
+		if strings.Contains(i.IDLike, DistroDebian) {
+			return DistroDebian
 		} else if strings.Contains(i.IDLike, "rhel") || strings.Contains(i.IDLike, "fedora") {
 			return "redhat"
 		} else if strings.Contains(i.IDLike, "arch") {

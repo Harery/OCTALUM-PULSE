@@ -10,12 +10,14 @@ import (
 	"syscall"
 )
 
+// Executor handles command execution with optional dry-run and sudo support.
 type Executor struct {
 	dryRun   bool
 	verbose  bool
 	sudo     bool
 }
 
+// NewExecutor creates a new command executor.
 func NewExecutor(dryRun, verbose bool) *Executor {
 	return &Executor{
 		dryRun:  dryRun,
@@ -24,6 +26,7 @@ func NewExecutor(dryRun, verbose bool) *Executor {
 	}
 }
 
+// Run executes a command with the given arguments.
 func (e *Executor) Run(ctx context.Context, name string, args ...string) ([]byte, error) {
 	cmd := e.buildCommand(ctx, name, args...)
 
@@ -44,6 +47,7 @@ func (e *Executor) Run(ctx context.Context, name string, args ...string) ([]byte
 	return output, nil
 }
 
+// RunWithSudo executes a command with sudo if not running as root.
 func (e *Executor) RunWithSudo(ctx context.Context, name string, args ...string) ([]byte, error) {
 	if e.sudo {
 		sudoArgs := append([]string{name}, args...)
@@ -52,12 +56,14 @@ func (e *Executor) RunWithSudo(ctx context.Context, name string, args ...string)
 	return e.Run(ctx, name, args...)
 }
 
+// buildCommand creates an exec.Cmd with context and environment.
 func (e *Executor) buildCommand(ctx context.Context, name string, args ...string) *exec.Cmd {
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Env = append(os.Environ(), "DEBIAN_FRONTEND=noninteractive")
 	return cmd
 }
 
+// Script executes a bash script string.
 func (e *Executor) Script(ctx context.Context, script string) ([]byte, error) {
 	if e.dryRun {
 		fmt.Printf("  [DRY-RUN] Would run script:\n%s\n", script)
@@ -69,6 +75,7 @@ func (e *Executor) Script(ctx context.Context, script string) ([]byte, error) {
 	return cmd.CombinedOutput()
 }
 
+// Result represents the outcome of an operation.
 type Result struct {
 	Success bool
 	Output  string
@@ -76,6 +83,7 @@ type Result struct {
 	Changes []Change
 }
 
+// Change represents a single modification made during execution.
 type Change struct {
 	Type        string
 	Description string
@@ -83,10 +91,12 @@ type Change struct {
 	After       string
 }
 
+// Checker provides system validation utilities.
 type Checker struct {
 	executor *Executor
 }
 
+// NewChecker creates a new system checker.
 func NewChecker(executor *Executor) *Checker {
 	return &Checker{executor: executor}
 }

@@ -1,3 +1,4 @@
+// Package models provides data models and configuration structures for OCTALUM-PULSE.
 package models
 
 import "time"
@@ -13,10 +14,10 @@ type Config struct {
 
 // Plugins contains configuration for all plugins.
 type Plugins struct {
-	Packages     PluginConfig `yaml:"packages" json:"packages"`
-	Security     PluginConfig `yaml:"security" json:"security"`
-	Performance  PluginConfig `yaml:"performance" json:"performance"`
-	Compliance   PluginConfig `yaml:"compliance" json:"compliance"`
+	Packages      PluginConfig `yaml:"packages" json:"packages"`
+	Security      PluginConfig `yaml:"security" json:"security"`
+	Performance   PluginConfig `yaml:"performance" json:"performance"`
+	Compliance    PluginConfig `yaml:"compliance" json:"compliance"`
 	Observability PluginConfig `yaml:"observability" json:"observability"`
 }
 

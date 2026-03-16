@@ -1,13 +1,15 @@
-// Package state provides state management with SQLite
+// Package state provides state management with SQLite.
 package state
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
+	// Register sqlite3 driver for state persistence
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -55,6 +57,7 @@ func New(dbPath string) (*State, error) {
 }
 
 func (s *State) migrate() error {
+	ctx := context.Background()
 	queries := []string{
 		`CREATE TABLE IF NOT EXISTS operations (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,7 +88,7 @@ func (s *State) migrate() error {
 	}
 
 	for _, q := range queries {
-		if _, err := s.db.Exec(q); err != nil {
+		if _, err := s.db.ExecContext(ctx, q); err != nil {
 			return err
 		}
 	}
@@ -93,7 +96,8 @@ func (s *State) migrate() error {
 }
 
 func (s *State) RecordOperation(opType, description, status, output string, duration time.Duration) (int64, error) {
-	result, err := s.db.Exec(
+	ctx := context.Background()
+	result, err := s.db.ExecContext(ctx,
 		`INSERT INTO operations (type, description, status, output, duration_ms) VALUES (?, ?, ?, ?, ?)`,
 		opType, description, status, output, duration.Milliseconds(),
 	)
@@ -104,7 +108,8 @@ func (s *State) RecordOperation(opType, description, status, output string, dura
 }
 
 func (s *State) GetOperations(limit int) ([]Operation, error) {
-	rows, err := s.db.Query(
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(ctx,
 		`SELECT id, timestamp, type, description, status, output, duration_ms
 		 FROM operations ORDER BY timestamp DESC LIMIT ?`,
 		limit,
@@ -112,7 +117,7 @@ func (s *State) GetOperations(limit int) ([]Operation, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var ops []Operation
 	for rows.Next() {
@@ -126,7 +131,8 @@ func (s *State) GetOperations(limit int) ([]Operation, error) {
 }
 
 func (s *State) RecordMetric(metricType, name, unit string, value float64) error {
-	_, err := s.db.Exec(
+	ctx := context.Background()
+	_, err := s.db.ExecContext(ctx,
 		`INSERT INTO health_metrics (metric_type, name, value, unit) VALUES (?, ?, ?, ?)`,
 		metricType, name, value, unit,
 	)
@@ -134,7 +140,8 @@ func (s *State) RecordMetric(metricType, name, unit string, value float64) error
 }
 
 func (s *State) GetMetrics(metricType string, since time.Time, limit int) ([]HealthMetric, error) {
-	rows, err := s.db.Query(
+	ctx := context.Background()
+	rows, err := s.db.QueryContext(ctx,
 		`SELECT id, timestamp, metric_type, name, value, unit
 		 FROM health_metrics
 		 WHERE metric_type = ? AND timestamp > ?
@@ -144,7 +151,7 @@ func (s *State) GetMetrics(metricType string, since time.Time, limit int) ([]Hea
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var metrics []HealthMetric
 	for rows.Next() {
@@ -158,7 +165,8 @@ func (s *State) GetMetrics(metricType string, since time.Time, limit int) ([]Hea
 }
 
 func (s *State) CreateSnapshot(name, description, data string) (int64, error) {
-	result, err := s.db.Exec(
+	ctx := context.Background()
+	result, err := s.db.ExecContext(ctx,
 		`INSERT INTO snapshots (name, description, data) VALUES (?, ?, ?)`,
 		name, description, data,
 	)
@@ -169,7 +177,8 @@ func (s *State) CreateSnapshot(name, description, data string) (int64, error) {
 }
 
 func (s *State) GetLatestSnapshot() (*Operation, error) {
-	row := s.db.QueryRow(
+	ctx := context.Background()
+	row := s.db.QueryRowContext(ctx,
 		`SELECT id, timestamp, type, description, status, output, duration_ms
 		 FROM snapshots ORDER BY timestamp DESC LIMIT 1`,
 	)

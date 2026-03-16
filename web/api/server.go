@@ -131,7 +131,7 @@ func (s *Server) handleUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.state != nil {
-		s.state.RecordOperation("update", "Package update via API", "success", "", 0)
+		_, _ = s.state.RecordOperation("update", "Package update via API", "success", "", 0)
 	}
 
 	s.jsonResponse(w, http.StatusOK, result)
@@ -156,7 +156,7 @@ func (s *Server) handleCleanup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.state != nil {
-		s.state.RecordOperation("cleanup", "System cleanup via API", "success", "", 0)
+		_, _ = s.state.RecordOperation("cleanup", "System cleanup via API", "success", "", 0)
 	}
 
 	s.jsonResponse(w, http.StatusOK, result)
@@ -175,7 +175,7 @@ func (s *Server) handleSecurityAudit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.state != nil {
-		s.state.RecordOperation("security_audit", "Security audit via API", "success", "", 0)
+		_, _ = s.state.RecordOperation("security_audit", "Security audit via API", "success", "", 0)
 	}
 
 	s.jsonResponse(w, http.StatusOK, result)
@@ -243,7 +243,7 @@ func (s *Server) handlePlugins(w http.ResponseWriter, r *http.Request) {
 func (s *Server) jsonResponse(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
+	_ = json.NewEncoder(w).Encode(data)
 }
 
 func (s *Server) errorResponse(w http.ResponseWriter, status int, message string) {

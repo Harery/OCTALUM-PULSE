@@ -16,8 +16,8 @@ type MockPlugin struct {
 
 func NewMockPlugin() *MockPlugin {
 	return &MockPlugin{
-		NameFunc: func() string { return "mock-plugin" },
-		VersionFunc: func() string { return "1.0.0" },
+		NameFunc:        func() string { return "mock-plugin" },
+		VersionFunc:     func() string { return "1.0.0" },
 		DescriptionFunc: func() string { return "Mock plugin for testing" },
 		ExecuteFunc: func(ctx context.Context, opts *plugin.ExecutionOptions) (*plugin.ExecutionResult, error) {
 			return &plugin.ExecutionResult{Success: true, Output: "mock output"}, nil

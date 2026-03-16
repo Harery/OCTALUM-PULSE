@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"OCTALUM-PULSE/internal/config"
-	"OCTALUM-PULSE/internal/state"
 	"OCTALUM-PULSE/internal/platform"
+	"OCTALUM-PULSE/internal/state"
 	"OCTALUM-PULSE/internal/version"
 )
 
@@ -30,12 +30,14 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+		cancel()
 		os.Exit(1)
 	}
 
 	agent := NewAgent(cfg)
 	if err := agent.Start(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "Agent error: %v\n", err)
+		cancel()
 		os.Exit(1)
 	}
 }
@@ -66,7 +68,7 @@ func (a *Agent) Start(ctx context.Context) error {
 		return fmt.Errorf("state initialization failed: %w", err)
 	}
 	a.state = db
-	defer a.state.Close()
+	defer func() { _ = a.state.Close() }()
 
 	go a.startHealthServer()
 	go a.runScheduledTasks(ctx)
@@ -92,20 +94,20 @@ func (a *Agent) startHealthServer() {
 func (a *Agent) handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"status":"healthy","timestamp":"%s"}`, time.Now().UTC().Format(time.RFC3339))
+	_, _ = fmt.Fprintf(w, `{"status":"healthy","timestamp":"%s"}`, time.Now().UTC().Format(time.RFC3339))
 }
 
 func (a *Agent) handleReady(w http.ResponseWriter, r *http.Request) {
 	if a.state == nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusServiceUnavailable)
-		fmt.Fprintf(w, `{"status":"not ready"}`)
+		_, _ = fmt.Fprintf(w, `{"status":"not ready"}`)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"status":"ready"}`)
+	_, _ = fmt.Fprintf(w, `{"status":"ready"}`)
 }
 
 func (a *Agent) runScheduledTasks(ctx context.Context) {
@@ -129,7 +131,7 @@ func (a *Agent) runHealthCheck(ctx context.Context) {
 		return
 	}
 
-	a.state.RecordMetric("system", "health_check", "count", 1)
+	_ = a.state.RecordMetric("system", "health_check", "count", 1)
 }
 
 func (a *Agent) Shutdown() error {
@@ -138,7 +140,7 @@ func (a *Agent) Shutdown() error {
 	if a.server != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		a.server.Shutdown(ctx)
+		_ = a.server.Shutdown(ctx)
 	}
 
 	fmt.Println("  Agent stopped")

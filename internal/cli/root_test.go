@@ -60,7 +60,7 @@ func TestNewApp(t *testing.T) {
 	if app.pluginMgr == nil {
 		t.Error("App pluginMgr is nil")
 	}
-	defer app.Close()
+	app.Close()
 }
 
 func TestHealthResult(t *testing.T) {

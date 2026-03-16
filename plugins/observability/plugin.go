@@ -93,8 +93,7 @@ func (p *ObservabilityPlugin) Execute(ctx context.Context, opts interface{}) (in
 	p.collectMetrics()
 
 	var results []string
-	results = append(results, "✓ Metrics collected")
-	results = append(results, fmt.Sprintf("✓ %d metrics available", len(p.metrics)))
+	results = append(results, "✓ Metrics collected", fmt.Sprintf("✓ %d metrics available", len(p.metrics)))
 
 	var promURL string
 	if p.prometheus {
@@ -154,7 +153,7 @@ func (p *ObservabilityPlugin) GetMetrics() []Metric {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 
-	var metrics []Metric
+	metrics := make([]Metric, 0, len(p.metrics))
 	for k, v := range p.metrics {
 		metrics = append(metrics, Metric{
 			Name:      k,
@@ -191,13 +190,14 @@ func (p *ObservabilityPlugin) startMetricsServer() {
 		addr = ":" + addr
 	}
 
-	http.ListenAndServe(addr, nil)
+	//nolint:gosec // Metrics server doesn't need TLS
+	_ = http.ListenAndServe(addr, nil)
 }
 
 func (p *ObservabilityPlugin) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	output, _ := p.ExportPrometheus()
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
-	w.Write([]byte(output))
+	_, _ = w.Write([]byte(output))
 }
 
 func (p *ObservabilityPlugin) handleHealth(w http.ResponseWriter, r *http.Request) {
@@ -208,7 +208,7 @@ func (p *ObservabilityPlugin) handleHealth(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(status)
+	_ = json.NewEncoder(w).Encode(status)
 }
 
 func (p *ObservabilityPlugin) RecordOperation(opType string, duration time.Duration, success bool) {

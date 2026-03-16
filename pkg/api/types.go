@@ -1,3 +1,4 @@
+// Package api provides API types and structures for OCTALUM-PULSE.
 package api
 
 import "time"
