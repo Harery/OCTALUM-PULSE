@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Config represents the main configuration file structure.
 type Config struct {
 	Version  int         `yaml:"version" json:"version"`
 	LogLevel string      `yaml:"log_level" json:"log_level"`
@@ -10,6 +11,7 @@ type Config struct {
 	Cloud    CloudConfig `yaml:"cloud" json:"cloud"`
 }
 
+// Plugins contains configuration for all plugins.
 type Plugins struct {
 	Packages     PluginConfig `yaml:"packages" json:"packages"`
 	Security     PluginConfig `yaml:"security" json:"security"`
@@ -18,22 +20,26 @@ type Plugins struct {
 	Observability PluginConfig `yaml:"observability" json:"observability"`
 }
 
+// PluginConfig represents configuration for a single plugin.
 type PluginConfig struct {
 	Enabled bool     `yaml:"enabled" json:"enabled"`
 	Options []string `yaml:"options,omitempty" json:"options,omitempty"`
 }
 
+// AIConfig represents AI integration configuration.
 type AIConfig struct {
 	Enabled bool   `yaml:"enabled" json:"enabled"`
 	Mode    string `yaml:"mode" json:"mode"`
 	Model   string `yaml:"model" json:"model"`
 }
 
+// CloudConfig represents cloud integration configuration.
 type CloudConfig struct {
 	Enabled  bool   `yaml:"enabled" json:"enabled"`
 	Endpoint string `yaml:"endpoint" json:"endpoint"`
 }
 
+// Metric represents a single metric data point.
 type Metric struct {
 	Name      string    `json:"name"`
 	Value     float64   `json:"value"`
@@ -42,6 +48,7 @@ type Metric struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
+// Snapshot represents a state snapshot for backup/restore.
 type Snapshot struct {
 	ID          int64     `json:"id"`
 	Name        string    `json:"name"`

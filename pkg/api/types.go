@@ -2,6 +2,7 @@ package api
 
 import "time"
 
+// HealthStatus represents the current health state of the system.
 type HealthStatus struct {
 	Status    string    `json:"status"`
 	Timestamp time.Time `json:"timestamp"`
@@ -9,6 +10,7 @@ type HealthStatus struct {
 	Platform  string    `json:"platform,omitempty"`
 }
 
+// Operation represents a single maintenance operation.
 type Operation struct {
 	ID          int64     `json:"id"`
 	Type        string    `json:"type"`
@@ -19,6 +21,7 @@ type Operation struct {
 	Timestamp   time.Time `json:"timestamp"`
 }
 
+// OperationResult represents the result of an operation execution.
 type OperationResult struct {
 	Success bool      `json:"success"`
 	Message string    `json:"message"`
@@ -28,6 +31,7 @@ type OperationResult struct {
 	Ended   time.Time `json:"ended"`
 }
 
+// Change represents a single change made during an operation.
 type Change struct {
 	Type        string `json:"type"`
 	Description string `json:"description"`
@@ -35,6 +39,7 @@ type Change struct {
 	After       string `json:"after,omitempty"`
 }
 
+// PluginInfo represents metadata about a plugin.
 type PluginInfo struct {
 	Name         string   `json:"name"`
 	Version      string   `json:"version"`
@@ -43,6 +48,7 @@ type PluginInfo struct {
 	Enabled      bool     `json:"enabled"`
 }
 
+// PlatformInfo represents detected platform information.
 type PlatformInfo struct {
 	OS             string `json:"os"`
 	Distribution   string `json:"distribution"`
@@ -56,6 +62,7 @@ type PlatformInfo struct {
 	Family         string `json:"family"`
 }
 
+// SecurityFinding represents a security issue found during scanning.
 type SecurityFinding struct {
 	ID          string `json:"id"`
 	Severity    string `json:"severity"`
@@ -64,15 +71,17 @@ type SecurityFinding struct {
 	Remediation string `json:"remediation,omitempty"`
 }
 
+// ComplianceResult represents the result of a compliance check.
 type ComplianceResult struct {
-	Standard      string           `json:"standard"`
-	Compliant     int              `json:"compliant"`
-	NonCompliant  int              `json:"non_compliant"`
-	Skipped       int              `json:"skipped"`
-	Findings      []ComplianceItem `json:"findings"`
-	Timestamp     time.Time        `json:"timestamp"`
+	Standard     string           `json:"standard"`
+	Compliant    int              `json:"compliant"`
+	NonCompliant int              `json:"non_compliant"`
+	Skipped      int              `json:"skipped"`
+	Findings     []ComplianceItem `json:"findings"`
+	Timestamp    time.Time        `json:"timestamp"`
 }
 
+// ComplianceItem represents a single compliance check item.
 type ComplianceItem struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -81,6 +90,7 @@ type ComplianceItem struct {
 	Remediation string `json:"remediation,omitempty"`
 }
 
+// ErrorResponse represents an API error response.
 type ErrorResponse struct {
 	Error   string `json:"error"`
 	Message string `json:"message"`
