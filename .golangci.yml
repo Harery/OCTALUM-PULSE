@@ -12,27 +12,35 @@ linters:
     - staticcheck
     - unused
     - misspell
-    - gofmt
-    - goimports
+    - revive
+    - gocyclo
+    - dupl
+    - goconst
+    - gocritic
+    - prealloc
+    - bodyclose
+    - noctx
+    - sqlclosecheck
+    - tparallel
 
   settings:
     errcheck:
       check-type-assertions: false
       check-blank: false
-      exclude-functions:
-        - fmt.Printf
-        - fmt.Println
-        - fmt.Sprintf
-        - fmt.Fprintf
-        - fmt.Print
-        - fmt.Fprint
 
     govet:
       disable:
         - shadow
 
-    misspell:
-      locale: US
+    gocyclo:
+      min-complexity: 15
+
+    dupl:
+      threshold: 100
+
+    goconst:
+      min-len: 3
+      min-occurrences: 3
 
   exclusions:
     presets:
@@ -48,10 +56,6 @@ linters:
         linters:
           - unused
           - errcheck
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
 
 formatters:
   enable:
