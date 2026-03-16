@@ -58,8 +58,8 @@ func TestDetectPackageManager(t *testing.T) {
 
 func TestFamily(t *testing.T) {
 	tests := []struct {
-		distro    string
-		expected  string
+		distro   string
+		expected string
 	}{
 		{"ubuntu", "debian"},
 		{"debian", "debian"},
@@ -108,13 +108,13 @@ func TestIsSupported(t *testing.T) {
 
 func TestString(t *testing.T) {
 	info := &Info{
-		OS:            "linux",
-		Distribution:  "ubuntu",
-		VersionID:     "24.04",
+		OS:             "linux",
+		Distribution:   "ubuntu",
+		VersionID:      "24.04",
 		PackageManager: "apt",
-		InitSystem:    "systemd",
-		Arch:          "amd64",
-		Kernel:        "6.8.0-generic",
+		InitSystem:     "systemd",
+		Arch:           "amd64",
+		Kernel:         "6.8.0-generic",
 	}
 
 	result := info.String()

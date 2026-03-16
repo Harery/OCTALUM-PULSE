@@ -1,3 +1,4 @@
+// Package plugin provides a plugin system for System Maintenance extensibility.
 package plugin
 
 import (

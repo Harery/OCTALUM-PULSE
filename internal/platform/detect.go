@@ -14,16 +14,16 @@ const DistroDebian = "debian"
 
 // Info contains platform information
 type Info struct {
-	OS            string `json:"os"`
-	Distribution  string `json:"distribution"`
-	Version       string `json:"version"`
-	VersionID     string `json:"version_id"`
-	IDLike        string `json:"id_like"`
+	OS             string `json:"os"`
+	Distribution   string `json:"distribution"`
+	Version        string `json:"version"`
+	VersionID      string `json:"version_id"`
+	IDLike         string `json:"id_like"`
 	PackageManager string `json:"package_manager"`
-	InitSystem    string `json:"init_system"`
-	Arch          string `json:"arch"`
-	Kernel        string `json:"kernel"`
-	Containerized bool   `json:"containerized"`
+	InitSystem     string `json:"init_system"`
+	Arch           string `json:"arch"`
+	Kernel         string `json:"kernel"`
+	Containerized  bool   `json:"containerized"`
 }
 
 // DetectedPlatform holds the detected platform information
@@ -205,18 +205,18 @@ func (i *Info) String() string {
 // IsSupported returns true if the platform is supported
 func (i *Info) IsSupported() bool {
 	supported := map[string]bool{
-		"ubuntu":            true,
-		"debian":            true,
-		"fedora":            true,
-		"rhel":              true,
-		"centos":            true,
-		"rocky":             true,
-		"almalinux":         true,
-		"arch":              true,
-		"manjaro":           true,
+		"ubuntu":              true,
+		"debian":              true,
+		"fedora":              true,
+		"rhel":                true,
+		"centos":              true,
+		"rocky":               true,
+		"almalinux":           true,
+		"arch":                true,
+		"manjaro":             true,
 		"opensuse-tumbleweed": true,
-		"opensuse-leap":     true,
-		"alpine":            true,
+		"opensuse-leap":       true,
+		"alpine":              true,
 	}
 
 	_, ok := supported[i.Distribution]

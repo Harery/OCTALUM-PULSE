@@ -408,7 +408,7 @@ func (a *App) securityUpdate(ctx context.Context, pm string, dryRun bool) []stri
 		return []string{"✓ Security updates applied"}
 	case "dnf", "yum":
 		if !dryRun {
-			a.executor.RunWithSudo(ctx, pm, "update", "--security", "-y")
+			_, _ = a.executor.RunWithSudo(ctx, pm, "update", "--security", "-y")
 		}
 		return []string{"✓ Security updates applied"}
 	default:
@@ -422,9 +422,9 @@ func (a *App) smartUpdate(ctx context.Context, pm string, dryRun bool) []string 
 	switch pm {
 	case "apt":
 		if !dryRun {
-			a.executor.RunWithSudo(ctx, "apt-get", "update", "-qq")
+			_, _ = a.executor.RunWithSudo(ctx, "apt-get", "update", "-qq")
 			args := append([]string{"install", "-y", "--only-upgrade"}, safePackages...)
-			a.executor.RunWithSudo(ctx, "apt-get", args...)
+			_, _ = a.executor.RunWithSudo(ctx, "apt-get", args...)
 		}
 		return []string{fmt.Sprintf("✓ Updated %d safe packages", len(safePackages))}
 	default:

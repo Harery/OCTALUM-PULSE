@@ -1,3 +1,4 @@
+// Package ai provides AI integration for system Maintenance analysis and recommendations.
 package ai
 
 import (

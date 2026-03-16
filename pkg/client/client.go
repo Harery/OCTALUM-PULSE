@@ -1,3 +1,4 @@
+// Package client provides an HTTP client for System Maintenance API interactions.
 package client
 
 import (
