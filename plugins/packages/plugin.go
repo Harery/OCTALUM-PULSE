@@ -12,7 +12,6 @@ import (
 type PackagesPlugin struct {
 	platform     PlatformInfo
 	packageMgr   PackageManager
-	dryRun       bool
 }
 
 type PlatformInfo struct {

@@ -175,9 +175,9 @@ func (p *ObservabilityPlugin) ExportPrometheus() (string, error) {
 
 	var sb strings.Builder
 	for name, value := range p.metrics {
-		sb.WriteString(fmt.Sprintf("# HELP %s PULSE metric\n", name))
-		sb.WriteString(fmt.Sprintf("# TYPE %s gauge\n", name))
-		sb.WriteString(fmt.Sprintf("%s %f\n", name, value))
+		fmt.Fprintf(&sb, "# HELP %s PULSE metric\n", name)
+		fmt.Fprintf(&sb, "# TYPE %s gauge\n", name)
+		fmt.Fprintf(&sb, "%s %f\n", name, value)
 	}
 	return sb.String(), nil
 }

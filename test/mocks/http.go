@@ -63,9 +63,7 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"error":"internal error"}`))
 }
 
-type MockContext struct {
-	cancelled bool
-}
+type MockContext struct{}
 
 func NewMockContext() (context.Context, context.CancelFunc) {
 	return context.WithCancel(context.Background())
