@@ -15,7 +15,7 @@ ARG VERSION=v2.0.0
 ARG BUILD_TIME
 ARG GIT_COMMIT
 
-RUN CGO_ENABLED=1 GOOS=linux go build \
+RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags="-s -w -X OCTALUM-PULSE/internal/version.Version=${VERSION} \
     -X OCTALUM-PULSE/internal/version.BuildTime=${BUILD_TIME} \
     -X OCTALUM-PULSE/internal/version.GitCommit=${GIT_COMMIT}" \
