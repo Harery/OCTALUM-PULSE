@@ -450,20 +450,20 @@ func (a *App) cleanupCmd(app *App) *cobra.Command {
 			switch pm {
 			case "apt":
 				if !dryRun {
-					a.executor.RunWithSudo(ctx, "apt-get", "autoremove", "-y", "-qq")
-					a.executor.RunWithSudo(ctx, "apt-get", "autoclean", "-y", "-qq")
+					_, _ = a.executor.RunWithSudo(ctx, "apt-get", "autoremove", "-y", "-qq")
+					_, _ = a.executor.RunWithSudo(ctx, "apt-get", "autoclean", "-y", "-qq")
 				}
 				actions = append(actions, "✓ Removed orphaned packages", "✓ Cleaned package cache")
 			case "dnf", "yum":
 				if !dryRun {
-					a.executor.RunWithSudo(ctx, pm, "autoremove", "-y")
-					a.executor.RunWithSudo(ctx, pm, "clean", "all")
+					_, _ = a.executor.RunWithSudo(ctx, pm, "autoremove", "-y")
+					_, _ = a.executor.RunWithSudo(ctx, pm, "clean", "all")
 				}
 				actions = append(actions, "✓ Removed orphaned packages", "✓ Cleaned package cache")
 			case "pacman":
 				if !dryRun {
-					a.executor.RunWithSudo(ctx, "pacman", "-Rns", "$(pacman -Qdtq)", "--noconfirm")
-					a.executor.RunWithSudo(ctx, "pacman", "-Sc", "--noconfirm")
+					_, _ = a.executor.RunWithSudo(ctx, "pacman", "-Rns", "$(pacman -Qdtq)", "--noconfirm")
+					_, _ = a.executor.RunWithSudo(ctx, "pacman", "-Sc", "--noconfirm")
 				}
 				actions = append(actions, "✓ Removed orphaned packages", "✓ Cleaned package cache")
 			}

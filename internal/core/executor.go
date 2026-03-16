@@ -12,9 +12,9 @@ import (
 
 // Executor handles command execution with optional dry-run and sudo support.
 type Executor struct {
-	dryRun   bool
-	verbose  bool
-	sudo     bool
+	dryRun  bool
+	verbose bool
+	sudo    bool
 }
 
 // NewExecutor creates a new command executor.

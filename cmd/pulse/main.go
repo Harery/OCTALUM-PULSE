@@ -30,7 +30,6 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
-		cancel()
 		os.Exit(1)
 	}
 
@@ -38,7 +37,6 @@ func main() {
 	rootCmd := cli.NewRootCommand(cfg, version.Get())
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		cancel()
 		os.Exit(1)
 	}
 }

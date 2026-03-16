@@ -30,14 +30,12 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
-		cancel()
 		os.Exit(1)
 	}
 
 	agent := NewAgent(cfg)
 	if err := agent.Start(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "Agent error: %v\n", err)
-		cancel()
 		os.Exit(1)
 	}
 }

@@ -1,10 +1,12 @@
 package integration
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -27,7 +29,9 @@ func TestDoctorCommand(t *testing.T) {
 		t.Skip("Binary not built, run 'make build' first")
 	}
 
-	cmd := exec.Command(binPath, "doctor", "--help")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, binPath, "doctor", "--help")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("doctor --help failed: %v\nOutput: %s", err, output)
@@ -40,7 +44,9 @@ func TestVersionCommand(t *testing.T) {
 		t.Skip("Binary not built, run 'make build' first")
 	}
 
-	cmd := exec.Command(binPath, "version")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, binPath, "version")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("version failed: %v\nOutput: %s", err, output)

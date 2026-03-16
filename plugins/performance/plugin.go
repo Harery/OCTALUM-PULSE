@@ -266,7 +266,9 @@ func (p *PerformancePlugin) optimizeIO(ctx context.Context, dryRun bool) *Change
 }
 
 func (p *PerformancePlugin) findRootDisk() string {
-	out, err := exec.Command("findmnt", "-n", "-o", "SOURCE", "/").Output()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	out, err := exec.CommandContext(ctx, "findmnt", "-n", "-o", "SOURCE", "/").Output()
 	if err != nil {
 		return ""
 	}
