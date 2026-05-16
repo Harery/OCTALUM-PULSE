@@ -16,7 +16,7 @@ updates:
       include: "scope"
 
   # Dockerfile dependencies (container builds)
-  - directory: "/"
+  - directory: "/docker"
     package-ecosystem: "docker"
     schedule:
       interval: "weekly"

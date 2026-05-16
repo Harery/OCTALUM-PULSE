@@ -28,6 +28,12 @@ jobs:
             refactor
             test
             chore
+            ci
+            build
+            perf
+            style
+            revert
+            deps
           requireScope: false
 
       - name: Run ShellCheck on changed files

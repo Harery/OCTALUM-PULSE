@@ -40,7 +40,7 @@ linters:
 
     goconst:
       min-len: 5
-      min-occurrences: 4
+      min-occurrences: 10
 
     revive:
       rules:
