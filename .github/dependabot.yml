@@ -26,5 +26,17 @@ updates:
       prefix: "docker"
       include: "scope"
 
-  # Note: OCTALUM-PULSE uses Bash/shell scripts with minimal external dependencies
-  # Additional package ecosystems can be added here as the project evolves
+  # Go modules
+  - directory: "/"
+    package-ecosystem: "gomod"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      go-deps:
+        patterns:
+          - "*"

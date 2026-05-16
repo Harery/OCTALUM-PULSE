@@ -19,7 +19,7 @@
 **One command. All distros. Zero worries.**
 
 ```bash
-curl -sSL pulse.harery.com/install | bash
+curl -fsSL https://raw.githubusercontent.com/Harery/OCTALUM-PULSE/main/scripts/install.sh | bash
 ```
 
 </div>
@@ -43,7 +43,7 @@ curl -sSL pulse.harery.com/install | bash
 
 ```bash
 # Install
-curl -sSL pulse.harery.com/install | bash
+curl -fsSL https://raw.githubusercontent.com/Harery/OCTALUM-PULSE/main/scripts/install.sh | bash
 
 # Run health check
 pulse doctor
@@ -113,7 +113,7 @@ pulse explain
 ### Method 1: One-Line Install (Recommended)
 
 ```bash
-curl -sSL pulse.harery.com/install | bash
+curl -fsSL https://raw.githubusercontent.com/Harery/OCTALUM-PULSE/main/scripts/install.sh | bash
 ```
 
 ### Method 2: Package Managers
@@ -303,6 +303,43 @@ pulse plugin init my-plugin
 | `pulse-performance` | System optimization and tuning |
 | `pulse-compliance` | Regulatory compliance (HIPAA, SOC2, PCI-DSS) |
 | `pulse-observability` | Prometheus/Grafana integration |
+
+---
+
+## 🆚 Comparison
+
+| Capability | OCTALUM-PULSE | [topgrade](https://github.com/topgrade-rs/topgrade) | Cockpit | Ansible Roles |
+|---|:--:|:--:|:--:|:--:|
+| Multi-distro package updates | ✅ | ✅ | Partial | DIY |
+| Aggressive system cleanup | ✅ | ❌ | ❌ | DIY |
+| CVE / security audit (CIS) | ✅ | ❌ | Partial | DIY |
+| Compliance (HIPAA / SOC2 / PCI-DSS) | ✅ | ❌ | ❌ | DIY |
+| Snapshot-based rollback | ✅ | ❌ | ❌ | ❌ |
+| AI-powered diagnostics | ✅ | ❌ | ❌ | ❌ |
+| Fleet / API / TUI | ✅ | ❌ | ✅ | ❌ |
+| Single static binary | ✅ | ✅ | ❌ | ❌ |
+| Dry-run first-class | ✅ | ✅ | N/A | ✅ |
+
+**Short version:** `topgrade` is a fantastic "update everything" runner. `pulse` is for sysadmins/SREs who need updates **plus** cleanup, security audits, compliance, history, and rollback under one roof.
+
+---
+
+## 🛡️ Safety & Dry-Run
+
+Every destructive operation supports `--dry-run` and prints exactly what it *would* run before touching the system:
+
+```bash
+pulse update --dry-run     # preview package upgrades
+pulse cleanup --dry-run    # preview files to delete
+pulse fix --dry-run        # preview auto-remediations
+```
+
+Additional safety nets:
+
+- **Default-deny privileges** — `pulse` never escalates silently; it asks `sudo` only for the specific subcommand that needs it.
+- **Operation history** — every run is recorded; `pulse history` shows what changed.
+- **Snapshot rollback** — supported package managers/filesystems are wrapped with `pulse rollback --last`.
+- **No telemetry by default** — opt-in only; see [SECURITY.md](SECURITY.md).
 
 ---
 

@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use OCTALUM-PULSE in academic work, please cite it as below."
+title: "OCTALUM-PULSE: Automated system maintenance toolkit for Linux"
+type: software
+authors:
+  - family-names: "Harery"
+    given-names: "Mohamed"
+    email: "mohamed@harery.com"
+    website: "https://harery.com"
+repository-code: "https://github.com/Harery/OCTALUM-PULSE"
+url: "https://github.com/Harery/OCTALUM-PULSE"
+license: MIT
+keywords:
+  - linux
+  - sysadmin
+  - devops
+  - sre
+  - package-management
+  - security
+  - compliance
+  - homelab
+  - cli
+  - go
