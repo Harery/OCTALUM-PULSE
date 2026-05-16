@@ -1,10 +1,14 @@
 package platform
 
 import (
+	"runtime"
 	"testing"
 )
 
 func TestDetect(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skipf("skipping platform detection test on %s (requires /etc/os-release)", runtime.GOOS)
+	}
 	info, err := Detect()
 	if err != nil {
 		t.Fatalf("Detect() error = %v", err)

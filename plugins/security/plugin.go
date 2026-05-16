@@ -135,7 +135,7 @@ type ExecutionOptions struct {
 }
 
 func (p *SecurityPlugin) scanCVEs(ctx context.Context, dryRun bool) ([]Finding, error) {
-	var findings []Finding
+	findings := []Finding{}
 
 	if _, err := exec.LookPath("apt"); err == nil {
 		cmd := exec.CommandContext(ctx, "apt", "list", "--upgradable")

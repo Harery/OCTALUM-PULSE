@@ -1,13 +1,22 @@
 package cli
 
 import (
+	"runtime"
 	"testing"
 
 	"OCTALUM-PULSE/internal/config"
 	"OCTALUM-PULSE/internal/version"
 )
 
+func skipIfNotLinux(t *testing.T) {
+	t.Helper()
+	if runtime.GOOS != "linux" {
+		t.Skipf("skipping: requires Linux platform detection (running on %s)", runtime.GOOS)
+	}
+}
+
 func TestNewRootCommand(t *testing.T) {
+	skipIfNotLinux(t)
 	cfg := config.DefaultConfig()
 	v := version.Info{
 		Version:   "2.0.0",
@@ -40,6 +49,7 @@ func TestNewRootCommand(t *testing.T) {
 }
 
 func TestNewApp(t *testing.T) {
+	skipIfNotLinux(t)
 	cfg := config.DefaultConfig()
 	app, err := NewApp(cfg)
 	if err != nil {
@@ -79,6 +89,7 @@ func TestHealthResult(t *testing.T) {
 }
 
 func TestApp_Context(t *testing.T) {
+	skipIfNotLinux(t)
 	cfg := config.DefaultConfig()
 	app, _ := NewApp(cfg)
 	defer app.Close()

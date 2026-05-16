@@ -188,7 +188,11 @@ func (p *PerformancePlugin) Optimize(ctx context.Context, dryRun bool) ([]Optimi
 	if err != nil {
 		return nil, err
 	}
-	return result.(*Result).Optimizations, nil
+	opts := result.(*Result).Optimizations
+	if opts == nil {
+		opts = []Optimization{}
+	}
+	return opts, nil
 }
 
 func (p *PerformancePlugin) GetMetrics() *Metrics {
