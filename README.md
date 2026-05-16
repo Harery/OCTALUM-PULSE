@@ -1,3 +1,13 @@
+<!-- KEYWORDS: linux maintenance tool, automated system update linux, topgrade alternative, cross-distro update tool, linux sysadmin cli, ubuntu maintenance script, arch linux update tool, homelab maintenance, linux server hardening cli, package manager wrapper, automated patch management linux, debian fedora rhel rocky almalinux opensuse alpine, CIS HIPAA SOC2 compliance scanner, server fleet management, cve scanner cli -->
+
+# OCTALUM-PULSE — Cross-Distro Linux Maintenance & Automated Patch-Management CLI
+
+**OCTALUM-PULSE is an open-source Linux maintenance tool that unifies package updates, system cleanup, security auditing, and compliance scanning across Ubuntu, Debian, Fedora, RHEL, Rocky, Alma, Arch, openSUSE, and Alpine — one binary, dry-run by default, snapshot rollback included.** Install on any distro with the one-liner below.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Harery/OCTALUM-PULSE/main/scripts/install.sh | bash
+```
+
 <div align="center">
 
 <img src="docs/assets/pulse-logo.svg" alt="OCTALUM-PULSE Logo" width="200">
@@ -389,6 +399,36 @@ make test
 # Build
 make build
 ```
+
+---
+
+## ❓ FAQ
+
+### What Linux distros does OCTALUM-PULSE support?
+Ubuntu (20.04 / 22.04 / 24.04), Debian (11 / 12 / 13), Fedora (40 / 41), RHEL (8 / 9 / 10), Rocky Linux, AlmaLinux, CentOS Stream 9, Arch Linux, openSUSE (Leap & Tumbleweed), and Alpine 3.19+. One binary detects your distro and dispatches to the right package manager (`apt`, `dnf`, `pacman`, `zypper`, `apk`).
+
+### Is OCTALUM-PULSE safe to run unattended on production servers?
+Yes — every destructive subcommand defaults to `--dry-run` semantics in CI/automation profiles, every operation is logged to a local history database, and snapshot-aware rollbacks are available via `pulse rollback --last`. We recommend you still gate it behind your normal change-management process and run with `--profile=conservative` for unattended patch windows.
+
+### How is this different from topgrade, Cockpit, or Ansible?
+- **topgrade** is a great "update everything" runner; `pulse` does updates **plus** cleanup, CVE/CIS audits, HIPAA/SOC2 compliance checks, history, and rollback.
+- **Cockpit** is a web UI for a single host; `pulse` is a scriptable CLI with a fleet API and Prometheus metrics.
+- **Ansible** is a general-purpose orchestrator and requires you to author and maintain roles; `pulse` ships opinionated, distro-aware maintenance out of the box and can be invoked **from** an Ansible role.
+
+### Does OCTALUM-PULSE touch user files or `$HOME`?
+No. `pulse` only operates on system package managers, `/var` caches, journal logs, and old kernels. User `$HOME` directories, dotfiles, and application data are never modified.
+
+### How do I roll back a bad update?
+`pulse rollback --last` restores the most recent snapshot on supported package managers and filesystems (apt/dpkg journal, dnf history, BTRFS/ZFS snapshots, Timeshift). Run `pulse history` to see every change and `pulse rollback <id>` to restore a specific point.
+
+### Can I use OCTALUM-PULSE in a homelab or for one server?
+Absolutely — single-binary, zero config required, MIT licensed. Most homelab users run `pulse update --smart` weekly via a systemd timer.
+
+### What about automated patch management at scale?
+`pulse` exposes a gRPC/REST fleet API and Prometheus metrics. Combine with the [Terraform provider](contrib/terraform-provider-pulse), the [Helm chart](helm/), or the [Ansible role](ansible/) for fleet-wide automated patch management on Linux.
+
+### Where can I see release notes / report a vulnerability?
+[CHANGELOG.md](CHANGELOG.md) for releases. Security policy and private disclosure in [SECURITY.md](SECURITY.md).
 
 ---
 
