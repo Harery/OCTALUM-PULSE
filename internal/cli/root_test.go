@@ -1,19 +1,23 @@
 package cli
 
 import (
-	"runtime"
 	"testing"
 
 	"OCTALUM-PULSE/internal/config"
+	"OCTALUM-PULSE/internal/platform"
 	"OCTALUM-PULSE/internal/version"
 )
 
-func skipIfNotLinux(t *testing.T) {
-	t.Helper()
-	if runtime.GOOS != "linux" {
-		t.Skipf("skipping: requires Linux platform detection (running on %s)", runtime.GOOS)
+func init() {
+	if platform.DetectedPlatform == nil {
+		platform.DetectedPlatform = &platform.Info{
+			OS: "linux", Distribution: "ubuntu", Version: "22.04", VersionID: "22.04",
+			PackageManager: "apt", InitSystem: "systemd", Arch: "amd64", Kernel: "test",
+		}
 	}
 }
+
+func skipIfNotLinux(t *testing.T) { t.Helper() }
 
 func TestNewRootCommand(t *testing.T) {
 	skipIfNotLinux(t)
