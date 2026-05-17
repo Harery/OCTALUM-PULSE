@@ -73,7 +73,7 @@ func decodeJSON(t *testing.T, rec *httptest.ResponseRecorder, dst interface{}) {
 func TestHandleHealth(t *testing.T) {
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/health", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/health", nil))
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
@@ -105,7 +105,7 @@ func TestHandleReady(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := tc.srv(t)
 			rec := httptest.NewRecorder()
-			srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/ready", nil))
+			srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/ready", nil))
 
 			if rec.Code != tc.want {
 				t.Fatalf("status = %d, want %d", rec.Code, tc.want)
@@ -122,7 +122,7 @@ func TestHandleReady(t *testing.T) {
 func TestHandleVersion(t *testing.T) {
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/version", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/version", nil))
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
@@ -137,7 +137,7 @@ func TestHandleVersion(t *testing.T) {
 func TestHandlePlatform(t *testing.T) {
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/platform", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/platform", nil))
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
@@ -164,7 +164,7 @@ func TestHandleDoctor(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.method, func(t *testing.T) {
 			rec := httptest.NewRecorder()
-			srv.ServeHTTP(rec, httptest.NewRequest(tc.method, "/api/v1/doctor", nil))
+			srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), tc.method, "/api/v1/doctor", nil))
 			if rec.Code != tc.want {
 				t.Errorf("status = %d, want %d", rec.Code, tc.want)
 			}
@@ -188,7 +188,7 @@ func TestHandleUpdate(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := newTestServer(t)
 			rec := httptest.NewRecorder()
-			req := httptest.NewRequest(tc.method, "/api/v1/update", strings.NewReader(tc.body))
+			req := httptest.NewRequestWithContext(t.Context(), tc.method, "/api/v1/update", strings.NewReader(tc.body))
 			srv.ServeHTTP(rec, req)
 			if rec.Code != tc.want {
 				t.Errorf("status = %d, want %d (body=%s)", rec.Code, tc.want, rec.Body.String())
@@ -212,7 +212,7 @@ func TestHandleCleanup(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := newTestServer(t)
 			rec := httptest.NewRecorder()
-			req := httptest.NewRequest(tc.method, "/api/v1/cleanup", strings.NewReader(tc.body))
+			req := httptest.NewRequestWithContext(t.Context(), tc.method, "/api/v1/cleanup", strings.NewReader(tc.body))
 			srv.ServeHTTP(rec, req)
 			if rec.Code != tc.want {
 				t.Errorf("status = %d, want %d", rec.Code, tc.want)
@@ -224,7 +224,7 @@ func TestHandleCleanup(t *testing.T) {
 func TestHandleSecurityAudit(t *testing.T) {
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/v1/security/audit", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/api/v1/security/audit", nil))
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
 	}
@@ -236,7 +236,7 @@ func TestHandleSecurityAudit(t *testing.T) {
 
 	// wrong method
 	rec = httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/security/audit", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/security/audit", nil))
 	if rec.Code != http.StatusMethodNotAllowed {
 		t.Errorf("GET status = %d, want 405", rec.Code)
 	}
@@ -255,7 +255,7 @@ func TestHandleComplianceCheck(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := newTestServer(t)
 			rec := httptest.NewRecorder()
-			srv.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, tc.url, nil))
+			srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodPost, tc.url, nil))
 			if rec.Code != http.StatusOK {
 				t.Fatalf("status = %d, want 200", rec.Code)
 			}
@@ -270,7 +270,7 @@ func TestHandleComplianceCheck(t *testing.T) {
 	// method not allowed
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/compliance/check", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/compliance/check", nil))
 	if rec.Code != http.StatusMethodNotAllowed {
 		t.Errorf("GET status = %d, want 405", rec.Code)
 	}
@@ -284,7 +284,7 @@ func TestHandleHistory(t *testing.T) {
 			t.Fatalf("seed: %v", err)
 		}
 		rec := httptest.NewRecorder()
-		srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/history", nil))
+		srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/history", nil))
 		if rec.Code != http.StatusOK {
 			t.Fatalf("status = %d, want 200", rec.Code)
 		}
@@ -298,7 +298,7 @@ func TestHandleHistory(t *testing.T) {
 	t.Run("without state", func(t *testing.T) {
 		srv := newTestServerNoState(t)
 		rec := httptest.NewRecorder()
-		srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/history", nil))
+		srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/history", nil))
 		if rec.Code != http.StatusOK {
 			t.Fatalf("status = %d, want 200", rec.Code)
 		}
@@ -308,7 +308,7 @@ func TestHandleHistory(t *testing.T) {
 func TestHandlePlugins(t *testing.T) {
 	srv := newTestServer(t)
 	rec := httptest.NewRecorder()
-	srv.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/plugins", nil))
+	srv.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/v1/plugins", nil))
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200", rec.Code)
 	}
