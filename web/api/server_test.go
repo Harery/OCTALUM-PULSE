@@ -93,10 +93,10 @@ func TestHandleHealth(t *testing.T) {
 
 func TestHandleReady(t *testing.T) {
 	tests := []struct {
-		name    string
-		srv     func(*testing.T) *Server
-		want    int
-		ready   bool
+		name  string
+		srv   func(*testing.T) *Server
+		want  int
+		ready bool
 	}{
 		{"with state", newTestServer, http.StatusOK, true},
 		{"without state", newTestServerNoState, http.StatusServiceUnavailable, false},
@@ -244,9 +244,9 @@ func TestHandleSecurityAudit(t *testing.T) {
 
 func TestHandleComplianceCheck(t *testing.T) {
 	tests := []struct {
-		name     string
-		url      string
-		wantStd  string
+		name    string
+		url     string
+		wantStd string
 	}{
 		{"default", "/api/v1/compliance/check", "cis"},
 		{"explicit", "/api/v1/compliance/check?standard=pci", "pci"},
@@ -358,7 +358,11 @@ func TestServerAsHTTPHandler(t *testing.T) {
 	ts := httptest.NewServer(srv)
 	t.Cleanup(ts.Close)
 
-	resp, err := http.Get(ts.URL + "/health")
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, ts.URL+"/health", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatalf("GET /health: %v", err)
 	}

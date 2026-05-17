@@ -52,7 +52,7 @@ func TestNewAgent(t *testing.T) {
 func TestHandleHealth(t *testing.T) {
 	a := NewAgent(config.DefaultConfig())
 	rec := httptest.NewRecorder()
-	a.handleHealth(rec, httptest.NewRequest(http.MethodGet, "/health", nil))
+	a.handleHealth(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/health", nil))
 	if rec.Code != http.StatusOK {
 		t.Errorf("status = %d, want 200", rec.Code)
 	}
@@ -75,7 +75,7 @@ func TestHandleReady(t *testing.T) {
 	t.Run("no state", func(t *testing.T) {
 		a := NewAgent(config.DefaultConfig())
 		rec := httptest.NewRecorder()
-		a.handleReady(rec, httptest.NewRequest(http.MethodGet, "/ready", nil))
+		a.handleReady(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/ready", nil))
 		if rec.Code != http.StatusServiceUnavailable {
 			t.Errorf("status = %d, want 503", rec.Code)
 		}
@@ -86,7 +86,7 @@ func TestHandleReady(t *testing.T) {
 	t.Run("with state", func(t *testing.T) {
 		a := newAgentWithState(t)
 		rec := httptest.NewRecorder()
-		a.handleReady(rec, httptest.NewRequest(http.MethodGet, "/ready", nil))
+		a.handleReady(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/ready", nil))
 		if rec.Code != http.StatusOK {
 			t.Errorf("status = %d, want 200", rec.Code)
 		}
