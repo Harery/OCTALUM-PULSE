@@ -172,9 +172,9 @@ A working portfolio of digital infrastructure, designed and maintained by [**Moh
 |:--:|:--|:--|
 | 00 | [**harery.com**](https://github.com/Harery/Mo) | The studio — portfolio, ledger, contact |
 | 01 | [**OCTALUME**](https://github.com/Harery/OCTALUME) | 8-phase enterprise SDLC framework |
-| 02 | [**OCTALUM-PYLAB**](https://github.com/Harery/OCTALUM-PYLAB) | Python DSA & coding-interview prep |
+| 02 | [**LuminaPy**](https://github.com/Harery/LuminaPy) | Python DSA & coding-interview prep |
 | 03 | [**OCTALUM-PULSE**](https://github.com/Harery/OCTALUM-PULSE) | Cross-distro Linux maintenance CLI |
-| 04 | [**octalum-bdtb**](https://github.com/Harery/octalum-bdtb) | 12-stage Claude Code Skill — brain-dump → product |
+| 04 | _Merged into [**OCTALUME**](https://github.com/Harery/OCTALUME)_ | (Phase 0: idea → spec → build pipeline) |
 
 <sub>
   <a href="https://harery.com">harery.com</a> ·
